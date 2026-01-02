@@ -217,7 +217,28 @@ function generateSVG(currentDate: Date, colored: boolean = false): string {
         svg += `\n  <circle cx="${cx}" cy="${cy}" r="${DOT_RADIUS}" fill="${fillColor}"/>`;
       } else {
         // Outlined circle for incomplete days (including today)
-        svg += `\n  <circle cx="${cx}" cy="${cy}" r="${DOT_RADIUS - 1.5}" fill="none" stroke="${COLORS.incompleteDayStroke}" stroke-width="3"/>`;
+        const dayNum = day + 1;
+        let strokeColor = COLORS.incompleteDayStroke;
+        
+        if (colored) {
+          // Use muted version of the day's color for the stroke
+          const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+          if (isHoliday(month, dayNum)) {
+            strokeColor = COLORS.holiday + "80"; // 50% opacity
+          } else if (isWeekend) {
+            strokeColor = COLORS.holiday + "80";
+          } else if (isWinter(month, dayNum)) {
+            strokeColor = COLORS.winterPurple + "80";
+          } else if (isSpring(month, dayNum)) {
+            strokeColor = COLORS.springGreen + "80";
+          } else if (isSummer(month, dayNum)) {
+            strokeColor = COLORS.summerYellow + "80";
+          } else {
+            strokeColor = COLORS.completedDay + "80";
+          }
+        }
+        
+        svg += `\n  <circle cx="${cx}" cy="${cy}" r="${DOT_RADIUS - 1.5}" fill="none" stroke="${strokeColor}" stroke-width="3"/>`;
       }
     }
     
